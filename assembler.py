@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 import os.path as path
+from time import perf_counter as pc
 
 
 def main():
@@ -58,6 +59,7 @@ def validateargs(args):
 
 def start_asm(ifile, ofile, verbose):
     print(f"Assembling {path.basename(ifile)} to {path.basename(ofile)}...")
+    start = pc()
 
     with open(ifile, 'r') as i:
         if verbose:
@@ -68,6 +70,8 @@ def start_asm(ifile, ofile, verbose):
         if verbose:
             print("Writing binary...")
         o.write(b'\x00\x00')
+
+    print(f"Assembled in {pc() - start}s")
 
 
 if __name__ == "__main__":
