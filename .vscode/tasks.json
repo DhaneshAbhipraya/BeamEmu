@@ -8,6 +8,7 @@
             "args": [
                 "assembler.py",
                 "-if", "${file}",
+                "-of", "${fileDirname}${pathSeparator}..${pathSeparator}build${pathSeparator}${fileBasenameNoExtension}.bin",
                 "-v"
             ],
             "problemMatcher": [
