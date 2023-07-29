@@ -60,18 +60,60 @@ def validateargs(args):
 def start_asm(ifile, ofile, verbose):
     print(f"Assembling {path.basename(ifile)} to {path.basename(ofile)}...")
     start = pc()
+    if verbose:
+        print("Creating translation tables...")
+    if verbose:
+        print("Creating translation table for instructions...")
+    if verbose:
+        print("Creating translation table for instructions > constants...")
+    LABEL = 0
+    VALUE = 1
+    REGISTER = 2
+    if verbose:
+        print("Creating translation table for instructions > table...")
+    trtabinst = {
+        "nop": [b'\x00', []],
+        "jmp": [b'\x01', [LABEL]],
+        "mov": [b'\x02', [VALUE, REGISTER]],
+        "inc": [b'\x03', [REGISTER]],
+        "dec": [b'\x04', [REGISTER]],
+        "add": [b'\x05', [REGISTER, VALUE]],
+        "sub": [b'\x06', [REGISTER, VALUE]],
+        "mul": [b'\x07', [REGISTER, VALUE]],
+        "div": [b'\x08', [REGISTER, VALUE]],
+        "cmp": [b'\x09', [VALUE, VALUE]],
+        "je":  [b'\x0a', [LABEL]],
+        "jne": [b'\x0b', [LABEL]],
+        "jz":  [b'\x0c', [LABEL]],
+        "jnz": [b'\x0d', [LABEL]],
+        "jl":  [b'\x0e', [LABEL]],
+        "jg":  [b'\x0f', [LABEL]],
+        "jnl": [b'\x10', [LABEL]],
+        "jng": [b'\x11', [LABEL]],
+        "out": [b'\x12', [VALUE]],
+    }
+
+    out = b''
 
     with open(ifile, 'r') as i:
         if verbose:
             print("Reading source...")
         source = i.read()
 
+    for line in source.split('\n'):
+        tokens = line.split()
+        out += trtabinst[tokens[0]][0]
+        args = trtabinst[tokens[0]][1]
+        for arg in enumerate(args):
+            if arg[1] == VALUE:
+                out += int(tokens[arg[1]]).to_bytes()
+
     with open(ofile, 'wb') as o:
         if verbose:
             print("Writing binary...")
-        o.write(b'\x00\x00')
+        o.write(out)
 
-    print(f"Assembled in {pc() - start}s")
+    print("Assembled in {:.3}ms".format((pc() - start) * 1000))
 
 
 if __name__ == "__main__":
