@@ -9,7 +9,7 @@
                 "assembler.py",
                 "-if", "${file}",
                 "-of", "${fileDirname}${pathSeparator}..${pathSeparator}build${pathSeparator}${fileBasenameNoExtension}.bin",
-                "-v"
+                "-vs"
             ],
             "problemMatcher": [
                 "$tsc"
